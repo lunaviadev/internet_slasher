@@ -9,7 +9,7 @@ public class Weapon : ScriptableObject
     public float bulletSpeed = 15f;
     public int bulletsPerShot = 1; // for shotguns or burst fire
     public float spreadAngle = 0f; // degrees between bullets
-    
+    public float recoilForce = 5f; // force applied to player on shoot
     [Header("Magazine Settings")]
     public int magazineSize = 10; // bullets per magazine
     public float reloadTime = 1.5f; // time to reload

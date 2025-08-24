@@ -7,14 +7,21 @@ public class WeaponShooter : MonoBehaviour
     private float lastFireTime;
     private int currentAmmo;
     private bool isReloading = false;
+    private Rigidbody2D rb;
+
+    public int CurrentAmmo => currentAmmo;
+    public bool IsReloading => isReloading;
+    public Weapon CurrentWeapon => currentWeapon;
 
     private void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         if (currentWeapon != null)
         {
-            currentAmmo = currentWeapon.magazineSize; // Initialize ammo count
+            currentAmmo = currentWeapon.magazineSize;
         }
     }
+
     private void Update()
     {
         if (currentWeapon == null) return;
@@ -31,14 +38,13 @@ public class WeaponShooter : MonoBehaviour
             if (currentAmmo > 0)
             {
                 Shoot();
-            lastFireTime = Time.time;
-            currentAmmo--;
+                lastFireTime = Time.time;
+                currentAmmo--;
             }
             else
             {
                 StartCoroutine(Reload());
             }
-        
         }
     }
 
@@ -54,7 +60,7 @@ public class WeaponShooter : MonoBehaviour
             float spreadOffset = currentWeapon.spreadAngle * (i - (currentWeapon.bulletsPerShot - 1) / 2f);
             Quaternion spreadRot = Quaternion.Euler(0, 0, spreadOffset);
 
-            Vector2 shootDir = spreadRot * transform.right; // now aligned with mouse
+            Vector2 shootDir = spreadRot * transform.right;
 
             GameObject bullet = BulletPool.Instance.GetBullet();
             bullet.transform.position = transform.position;
@@ -62,6 +68,8 @@ public class WeaponShooter : MonoBehaviour
             bullet.SetActive(true);
 
             bullet.GetComponent<Bullet>().Fire(shootDir, currentWeapon.bulletSpeed);
+
+            rb.AddForce(-shootDir.normalized * currentWeapon.recoilForce, ForceMode2D.Impulse);
         }
     }
 
@@ -79,9 +87,6 @@ public class WeaponShooter : MonoBehaviour
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mouseWorld - transform.position);
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        // Rotate the player or weapon to face the mouse
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
-
 }
