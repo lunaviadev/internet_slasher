@@ -13,6 +13,14 @@ public class WeaponShooter : MonoBehaviour
     public bool IsReloading => isReloading;
     public Weapon CurrentWeapon => currentWeapon;
 
+
+    public void EquipWeapon(Weapon newWeapon)
+    {
+        currentWeapon = newWeapon;
+        currentAmmo = newWeapon.magazineSize;
+        isReloading = false;
+    }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -46,6 +54,10 @@ public class WeaponShooter : MonoBehaviour
                 StartCoroutine(Reload());
             }
         }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            UseAbilityandDropWeapon();
+        }
     }
 
     private void FixedUpdate()
@@ -71,6 +83,18 @@ public class WeaponShooter : MonoBehaviour
 
             rb.AddForce(-shootDir.normalized * currentWeapon.recoilForce, ForceMode2D.Impulse);
         }
+    }
+
+    private void UseAbilityandDropWeapon()
+    {
+        if (currentWeapon == null) return;
+
+        // TODO: Implement actual ability logic based on currentWeapon.abilityType
+        Debug.Log("Used ability: " + currentWeapon.abilityType);
+
+        currentWeapon = null;
+        currentAmmo = 0;
+        isReloading = false;
     }
 
     private IEnumerator Reload()
