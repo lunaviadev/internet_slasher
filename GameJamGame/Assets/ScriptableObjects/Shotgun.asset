@@ -17,6 +17,8 @@ MonoBehaviour:
   bulletSpeed: 10
   bulletsPerShot: 5
   spreadAngle: 10
+  recoilForce: 5
   magazineSize: 4
   reloadTime: 2.5
+  abilityType: 1
   bulletPrefab: {fileID: 3993684630660934768, guid: f2cd228e12118534199a15887a68c30a, type: 3}

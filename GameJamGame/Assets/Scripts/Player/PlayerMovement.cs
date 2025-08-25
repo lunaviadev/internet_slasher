@@ -10,24 +10,25 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 input;
-    private Vector2 velocity;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+        rb.drag = 0f; // we’ll handle decel manually
     }
 
     private void Update()
     {
-        // Get raw input so we have instant direction switching
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
-        input = new Vector2(x, y).normalized; // normalized to avoid faster diagonals
+        input = new Vector2(x, y).normalized;
     }
 
     private void FixedUpdate()
     {
         Vector2 targetVelocity = input * moveSpeed;
+        Vector2 velocity = rb.velocity;
 
         Vector2 velocityDiff = targetVelocity - velocity;
 
@@ -35,12 +36,9 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 movement = velocity + velocityDiff.normalized * accelRate * Time.fixedDeltaTime;
 
-        if (Vector2.Distance(Vector2.zero, targetVelocity) < Vector2.Distance(Vector2.zero, movement))
+        if (velocityDiff.magnitude < accelRate * Time.fixedDeltaTime)
             movement = targetVelocity;
 
-        velocity = movement;
-
-        rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+        rb.velocity = movement;
     }
-
 }
